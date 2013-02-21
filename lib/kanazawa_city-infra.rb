@@ -1,39 +1,117 @@
+# coding: utf-8
 require "kanazawa_city/infra/version"
-require "faraday"
+require "httparty"
+require "hashie"
+require "json"
 
 module KanazawaCity
   module Infra
-    URL_ROOT = "https://infra-api.city.kanazawa.ishikawa.jp"
+    include HTTParty
+    format :json
+    base_uri "https://infra-api.city.kanazawa.ishikawa.jp"
+    API_VERSION = 'v1'
 
     class << self
-      def connection
-        Faraday::Connection.new(URL_ROOT, ssl: {verify: false}) do |builder|
-          builder.request :url_encoded
-          builder.adapter :net_http
+      def genres(options={})
+        options[:lang] ||= "ja"
+
+        res = JSON.parse(get("/#{API_VERSION}/genres/list.json", :query => options).body)
+
+        res["genres"].map do |g|
+          that = self
+          g[:query_id] = g["id"]
+          g = Hashie::Mash.new(g)
+          g.subgenres.map! do |sg|
+            sg["query_id"] = "#{g["id"]}-#{sg["id"]}"
+            sg
+          end
+          g.freeze
         end
       end
 
-      def genres
-        res = connection.get '/v1/genres/list.json'
-        puts res.body
+      def facilities(options={})
+        options[:lang] ||= "ja"
+        options[:genre] &&= 
+          if options[:genre].kind_of? Array
+            options[:genre].map { |g|
+              if g.respond_to? "query_id"
+                g.query_id
+              elsif g.kind_of?(String) || g.kind_of?(Integer)
+                g
+              else
+               raise ArgumentError 
+              end
+            }.join(',')
+          elsif options[:genre].respond_to? "query_id"
+            options[:genre].query_id
+          elsif options[:genre].kind_of? String
+            options[:genre]
+          else 
+            raise ArgumentError
+          end
+
+        res = JSON.parse(get("/#{API_VERSION}/facilities/search.json", :query => options).body)
+        next_page = res["next_page"] || "" 
+        that = self
+        res = res["facilities"].map! do |f|
+          f["genres"].map! do |g|
+            g["query_id"] = g["id"]
+            g["subgenre"]["query_id"] = "#{g["id"]}-#{g["subgenre"]["id"]}" if g["subgenre"]
+            g
+          end
+          f = Hashie::Mash.new(f)
+          f.singleton_class.send(:define_method, :detail) do
+            that.facility(id: f["id"], lang: options[:lang])
+          end
+          f.freeze
+        end
+        res.singleton_class.send(:define_method, :"has_next?") do
+          ! next_page.empty?
+        end
+
+        res.singleton_class.send(:define_method, :next) do
+          params = URI.parse(next_page).query.split('&')
+          query = params.inject({}) do |query, param|
+            k, v = param.split('=')
+            query[k.to_sym] = URI.decode(v)
+            query
+          end
+          that.facilities(query)
+        end
+
+        res
       end
 
-      def facilities
-        #lang ja
-        #geocode lat lon radius
-        #genre integer or genre_object
-        #keyword 
-        #count max fetch size
-      end
+      def facility(options={})
+        options[:lang] ||= "ja"
 
-      def facility
-        #id
-        #lang ja en zh-Hans xzh-Hant ko fr pt es
+        res = JSON.parse(get("/#{API_VERSION}/facilities/#{options[:id]}.json",
+                             :query => {:lang => options[:lang]}).body)
+
+        f = res["facility"]
+        f["genres"].map! do |g|
+          g["query_id"] = g["id"]
+          g["subgenre"]["query_id"] = "#{g["id"]}-#{g["subgenre"]["id"]}" if g["subgenre"]
+          g
+        end
+        f = Hashie::Mash.new(f)
+        f.freeze
       end
     end
   end
 end
 
 if __FILE__ == $0
-  KanazawaCity::Infra.genres
+  require 'pp'
+  genres = KanazawaCity::Infra.genres
+  fs = KanazawaCity::Infra.facilities(geocode: "36.5946816,136.6255726,2000")
+  fs = KanazawaCity::Infra.facilities(keyword: "まちのり")
+  fs = KanazawaCity::Infra.facilities(genre: genres[0])
+  fs = KanazawaCity::Infra.facilities(genre: ["1", genres[1]])
+  fs = KanazawaCity::Infra.facilities(genre: ["12-28", "13"], count: 10)
+
+  while fs.has_next?
+    fs = fs.next
+    pp fs
+  end
 end
