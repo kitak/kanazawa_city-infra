@@ -1,4 +1,4 @@
-require "kanazawa_city-infra/version"
+require "kanazawa_city/infra/version"
 require "faraday"
 
 module KanazawaCity
