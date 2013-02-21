@@ -8,9 +8,9 @@ Gem::Specification.new do |gem|
   gem.version       = KanazawaCity::Infra::VERSION
   gem.authors       = ["Keisuke KITA"]
   gem.email         = ["kei.kita2501@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{Simple access KanazawaCity infra API}
+  gem.summary       = %q{Simple access KanazawaCity infra API}
+  gem.homepage      = "https://github.com/kitak/kanazawa_city-infra"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

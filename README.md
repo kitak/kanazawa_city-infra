@@ -51,6 +51,7 @@ while fs.has_next?
   pp fs
 end
 ```
+取得した情報の細かい絞り込みにはEnumerable#select, Enumerable#detectなどが便利です.
 
 検索結果の施設情報の取得例
 ```
