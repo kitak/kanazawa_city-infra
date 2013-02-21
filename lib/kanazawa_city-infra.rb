@@ -104,14 +104,9 @@ end
 if __FILE__ == $0
   require 'pp'
   genres = KanazawaCity::Infra.genres
-  fs = KanazawaCity::Infra.facilities(geocode: "36.5946816,136.6255726,2000")
+  pp genres[0]
   fs = KanazawaCity::Infra.facilities(keyword: "まちのり")
-  fs = KanazawaCity::Infra.facilities(genre: genres[0])
-  fs = KanazawaCity::Infra.facilities(genre: ["1", genres[1]])
-  fs = KanazawaCity::Infra.facilities(genre: ["12-28", "13"], count: 10)
-
-  while fs.has_next?
-    fs = fs.next
-    pp fs
-  end
+  puts fs[0].name
+  puts fs[0]['name']
+  pp fs[0].detail
 end
