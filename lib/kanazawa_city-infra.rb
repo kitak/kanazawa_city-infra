@@ -51,6 +51,7 @@ module KanazawaCity
           end
 
         res = JSON.parse(get("/#{API_VERSION}/facilities/search.json", :query => options).body)
+        keyword = options[:keyword] || ""
         next_page = res["next_page"] || "" 
         that = self
         res = res["facilities"].map! do |f|
@@ -73,7 +74,11 @@ module KanazawaCity
           params = URI.parse(next_page).query.split('&')
           query = params.inject({}) do |query, param|
             k, v = param.split('=')
-            query[k.to_sym] = URI.decode(v)
+            if k == "keyword"
+              query[k.to_sym] = URI.decode(keyword)
+            else
+              query[k.to_sym] = URI.decode(v)
+            end
             query
           end
           that.facilities(query)
@@ -101,12 +106,3 @@ module KanazawaCity
   end
 end
 
-if __FILE__ == $0
-  require 'pp'
-  genres = KanazawaCity::Infra.genres
-  pp genres[0]
-  fs = KanazawaCity::Infra.facilities(keyword: "まちのり")
-  puts fs[0].name
-  puts fs[0]['name']
-  pp fs[0].detail
-end
