@@ -44,7 +44,7 @@ module KanazawaCity
             }.join(',')
           elsif options[:genre].respond_to? "query_id"
             options[:genre].query_id
-          elsif options[:genre].kind_of? String
+          elsif options[:genre].kind_of?(String) || g.kind_of?(Integer)
             options[:genre]
           else 
             raise ArgumentError
