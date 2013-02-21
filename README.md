@@ -38,7 +38,7 @@ f = fs[0].detail # 施設の詳細な情報を取得
 puts f.summary # 施設の概要
 
 KanazawaCity::Infra.facilities(geocode: "36.5946816,136.6255726,2000") # 範囲検索
-KanazawaCity::Infra.facilities(genre: 1) # ジャンルのidで検索 
+KanazawaCity::Infra.facilities(genre: "1") # ジャンルのidで検索 
 KanazawaCity::Infra.facilities(genre: genres[0]) # 取得したジャンルのオブジェクトで検索
 KanazawaCity::Infra.facilities(genre: ["12-28", "13"]) # 複数のジャンルを指定
 KanazawaCity::Infra.facilities(genre: ["1", genres[1]]) # idとオブジェクトを組み合わせることも可能
