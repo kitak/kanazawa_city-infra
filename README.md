@@ -1,8 +1,8 @@
 # KanazawaCity::Infra
 
-石川県金沢市の地図情報基盤APIにアクセスするライブラリです． 
-市有施設などの公共データを利用できます． 
-APIの詳細については(施設情報の二次利用について)[http://www4.city.kanazawa.lg.jp/11010/opendata/index.html]を参照してください．
+石川県金沢市の地図情報基盤APIにアクセスするライブラリです．  
+市有施設などの公共データを利用できます．  
+APIの詳細については[施設情報の二次利用について](http://www4.city.kanazawa.lg.jp/11010/opendata/index.html)を参照してください．
 
 ## Installation
 
@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-API呼び出し結果の詳細な項目については(施設情報の二次利用について)[http://www4.city.kanazawa.lg.jp/11010/opendata/index.html]の「地図情報発信基盤API利用マニュアル」を参照してください.
+API呼び出し結果の詳細な項目については[施設情報の二次利用について](http://www4.city.kanazawa.lg.jp/11010/opendata/index.html)の「地図情報発信基盤API利用マニュアル」を参照してください.
 ```ruby
 require 'kanazawa_city-infra'
 
@@ -54,7 +54,7 @@ end
 取得した情報の細かい絞り込みにはEnumerable#select, Enumerable#detectなどが便利です.
 
 検索結果の施設情報の取得例
-```
+```ruby
 {
   "id"=>"2007",
   "name"=>"金沢21世紀美術館",
@@ -74,7 +74,7 @@ end
 ```
 
 施設の詳細な情報の取得例
-```
+```ruby
 {
  "id"=>"386",
  "name"=>"まちのり事務局",
@@ -97,7 +97,7 @@ end
 ```
 
 取得したジャンル情報の取得例
-```
+```ruby
 {
  "id"=>"1",
  "name"=>"観光",
@@ -160,8 +160,8 @@ end
 ```
 
 ## 備考 
-このライブラリから取得できるデータは金沢市から提供されています． 
-このライブラリを利用する場合には，(施設情報の二次利用について)[http://www4.city.kanazawa.lg.jp/11010/opendata/index.html]の「施設情報の利用条件等」を確認してください．
+このライブラリから取得できるデータは金沢市から提供されています．  
+このライブラリを利用する場合には，[施設情報の二次利用について](http://www4.city.kanazawa.lg.jp/11010/opendata/index.html)の「施設情報の利用条件等」を確認してください．
 
 ## Contributing
 
