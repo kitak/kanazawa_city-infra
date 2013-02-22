@@ -48,6 +48,7 @@ fs = KanazawaCity::Infra.facilities(genre: 1, count: 10)
 ## 全ての検索結果を走査する
 while fs.has_next?
   fs = fs.next
+  require 'pp'
   pp fs
 end
 ```
